@@ -1,5 +1,5 @@
 window.onload = () => {
-  changeView("#view-play")
+  changeView("#view-home")
 }
 
 function hideAllViews() {
