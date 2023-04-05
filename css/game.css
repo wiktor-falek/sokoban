@@ -1,0 +1,40 @@
+#board {
+  display: grid;
+  grid-template-columns: repeat(var(--width), 1fr);
+  grid-template-rows: repeat(var(--height), 1fr);
+  width: fit-content;
+  border: 1px solid gray;
+  background-color: gray;
+  gap: 1px;
+}
+
+#board .tile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  background-color: black;
+}
+
+.tile::after {
+  font-size: 48px;
+}
+
+.tile-player::after {
+  content: "🐈";
+}
+
+.tile-box::after {
+  font-size: 32px;
+  content: "🧶";
+}
+
+.tile-target::after {
+  font-size: 28px;
+  content: "🟣";
+}
+
+.tile-obstacle::after {
+  content: "🛁";
+}
