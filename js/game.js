@@ -1,6 +1,22 @@
 const boardElement = document.querySelector("#board");
 if (boardElement == null) throw new Error("#board element not found");
 
+const levelsData = [
+  {
+    width: 6,
+    height: 7,
+    board: [
+      [Obstacle(), Empty(), Empty(), Empty(), Empty(), Empty()],
+      [Obstacle(), Empty(), Player(), Box(), Target(), Empty()],
+      [Empty(), Empty(), Empty(), Empty(), Empty(), Empty()],
+      [Empty(), Box(), Target(), Empty(), Empty(), Empty()],
+      [Empty(), Empty(), Box(), Empty(), Empty(), Empty()],
+      [Empty(), Empty(), Empty(), Empty(), Empty(), Empty()],
+      [Empty(), Empty(), Empty(), Empty(), Empty(), Empty()],
+    ],
+  },
+];
+
 function Empty() {
   return { type: "empty" };
 }
@@ -21,20 +37,6 @@ function Obstacle() {
   return { type: "obstacle", immovable: true };
 }
 
-const firstLevelData = {
-  width: 6,
-  height: 7,
-  board: [
-    [Obstacle(), Empty(), Empty(), Empty(), Empty(), Empty()],
-    [Obstacle(), Empty(), Player(), Box(), Target(), Empty()],
-    [Empty(), Empty(), Empty(), Empty(), Empty(), Empty()],
-    [Empty(), Box(), Target(), Empty(), Empty(), Empty()],
-    [Empty(), Empty(), Box(), Empty(), Empty(), Empty()],
-    [Empty(), Empty(), Empty(), Empty(), Empty(), Empty()],
-    [Empty(), Empty(), Empty(), Empty(), Empty(), Empty()],
-  ],
-};
-
 function getPlayerCoordinates(board) {
   for (let x = 0; x < board.length; x++) {
     let y = board[x].findIndex((tile) => tile.type === "player");
@@ -49,9 +51,8 @@ class Level {
   constructor(levelData) {
     this.width = levelData.width;
     this.height = levelData.height;
-    this.board = levelData.board;
+    this.board = JSON.parse(JSON.stringify(levelData.board));
     [this.playerX, this.playerY] = getPlayerCoordinates(this.board);
-    console.log(this);
   }
 
   get tiles() {
@@ -147,15 +148,9 @@ class Level {
   }
 }
 
-function setupBoardElement(level) {
-  boardElement.style.setProperty("--width", level.width);
-  boardElement.style.setProperty("--height", level.height);
-  renderBoard();
-}
-
 function renderBoard() {
   boardElement.replaceChildren();
-  for (const tile of level.tiles) {
+  for (const tile of gameState.level.tiles) {
     const node = document.createElement("div");
 
     node.classList.add("tile");
@@ -168,8 +163,16 @@ function renderBoard() {
   }
 }
 
-let level = new Level(firstLevelData);
-setupBoardElement(level);
+function setupBoardElement() {
+  boardElement.style.setProperty("--width", gameState.level.width);
+  boardElement.style.setProperty("--height", gameState.level.height);
+}
+
+function resetLevel() {
+  gameState.level = new Level(levelsData[gameState.currentLevelId]);
+  setupBoardElement();
+  renderBoard();
+}
 
 document.addEventListener("keydown", (event) => {
   const viewPlayElement = document.querySelector("#view-play");
@@ -180,22 +183,30 @@ document.addEventListener("keydown", (event) => {
 
   switch (code) {
     case "ArrowUp":
-      level.moveUp();
+      gameState.level.moveUp();
       break;
 
     case "ArrowDown":
-      level.moveDown();
+      gameState.level.moveDown();
       break;
 
     case "ArrowLeft":
-      level.moveLeft();
+      gameState.level.moveLeft();
       break;
 
     case "ArrowRight":
-      level.moveRight();
+      gameState.level.moveRight();
       break;
     default:
       return;
   }
   renderBoard();
 });
+
+let gameState = {
+  currentLevelId: 0,
+  level: new Level(levelsData[0]),
+};
+
+setupBoardElement();
+renderBoard();
