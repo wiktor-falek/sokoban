@@ -58,10 +58,6 @@ class Level {
     return this.board.flat();
   }
 
-  get currentTile() {
-    return this.board[this.playerY][this.playerX];
-  }
-
   getTile(x, y) {
     try {
       return this.board[y][x];
@@ -69,13 +65,6 @@ class Level {
       return undefined;
     }
   }
-
-  /*
-  1. if targetTile.immovable then early return
-  2. if targetTile is a box, check if that box can be moved in the same direction to the next tile
-  3. if targetTile is a box, and the next target tile is a "target" type, need a way to distinguish 
-     this type of tile
-  */
 
   moveUp() {
     const targetTile = this.getTile(this.playerX, this.playerY - 1);
